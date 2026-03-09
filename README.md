@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🛡️ Netra AI - Violence Detection System
 
 AI-powered violence detection system with image/video upload and live webcam support.
@@ -111,3 +112,6 @@ Share the HTTPS URL to access from anywhere!
 ---
 
 **© 2024 Netra AI - AI-Powered Security System**
+=======
+# NetraAI
+>>>>>>> dbb5b3061bbe12d46e91cdfd73e68e2b48be6cdd

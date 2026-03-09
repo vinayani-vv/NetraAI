@@ -1,0 +1,11 @@
+datasets/
+images/
+*.pt
+*.pth
+*.jpg
+*.jpeg
+*.png
+*.mp4
+*.avi
+node_modules/
+__pycache__/
