@@ -9,3 +9,5 @@ images/
 *.avi
 node_modules/
 __pycache__/
+runs/
+*.onnx
