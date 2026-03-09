@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Netra AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --primary-light: #38bdf8;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --purple: #8b5cf6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-header { padding: 24px; border-bottom: 1px solid var(--border); }
+
+        .logo-container { display: flex; align-items: center; gap: 12px; }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+
+        .nav-section { margin-bottom: 24px; }
+
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 12px;
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+
+        .nav-item.active {
+            background: rgba(14, 165, 233, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+        }
+
+        .nav-icon { font-size: 18px; width: 24px; text-align: center; }
+
+        .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-dark);
+            border-radius: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--purple), var(--primary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .user-info { flex: 1; }
+        .user-name { font-size: 0.9rem; font-weight: 600; }
+        .user-role { font-size: 0.75rem; color: var(--text-muted); }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* Main */
+        .main-content { margin-left: 260px; padding: 24px; }
+
+        .page-header { margin-bottom: 32px; }
+        .page-title { font-size: 1.75rem; font-weight: 700; margin-bottom: 4px; }
+        .page-subtitle { color: var(--text-secondary); font-size: 0.95rem; }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-icon.blue { background: rgba(14, 165, 233, 0.15); color: var(--primary); }
+        .stat-icon.green { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .stat-icon.red { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .stat-icon.purple { background: rgba(139, 92, 246, 0.15); color: var(--purple); }
+
+        .stat-content { flex: 1; }
+        .stat-label { font-size: 0.8rem; color: var(--text-secondary); }
+        .stat-value { font-size: 1.5rem; font-weight: 700; }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title { font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .card-body { padding: 20px; }
+
+        /* Upload */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover { border-color: var(--primary); background: rgba(14, 165, 233, 0.05); }
+
+        .upload-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(14, 165, 233, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 28px;
+            color: var(--primary);
+        }
+
+        .upload-area h3 { font-size: 1rem; margin-bottom: 6px; }
+        .upload-area p { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 14px; }
+
+        .upload-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        #fileInput { display: none; }
+
+        /* Webcam Section */
+        .webcam-btn {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .webcam-preview {
+            max-width: 600px;
+            margin: 0 auto;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .webcam-preview span { font-size: 3rem; }
+
+        /* Camera Grid */
+        .cameras-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .camera-card {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .camera-preview {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: #000;
+        }
+
+        .camera-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: var(--text-muted);
+        }
+
+        .camera-status {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .camera-status.online { color: var(--success); }
+        .camera-status.offline { color: var(--danger); }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-dot.pulse { animation: pulse 1.5s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .camera-info { padding: 14px; }
+
+        .camera-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .camera-actions { display: flex; gap: 6px; }
+
+        .camera-action-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            font-size: 14px;
+        }
+
+        .camera-action-btn:hover { color: var(--text-primary); }
+        .camera-action-btn.delete:hover { color: var(--danger); }
+
+        .camera-link { font-size: 0.75rem; color: var(--text-muted); }
+
+        .camera-type {
+            display: inline-block;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            padding: 2px 8px;
+            background: var(--bg-card);
+            border-radius: 4px;
+        }
+
+        .add-camera-card {
+            background: var(--bg-dark);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            aspect-ratio: 16/9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            min-height: 150px;
+            transition: all 0.3s;
+        }
+
+        .add-camera-card:hover { border-color: var(--primary); background: rgba(14, 165, 233, 0.05); }
+        .add-camera-card span { font-size: 2.5rem; color: var(--text-muted); }
+        .add-camera-card p { color: var(--text-muted); font-size: 0.85rem; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title { font-size: 1.1rem; font-weight: 600; }
+        .modal-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 20px; }
+        .modal-body { padding: 20px; }
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15); }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .camera-type-options { display: flex; gap: 10px; margin-bottom: 16px; }
+
+        .camera-type-option {
+            flex: 1;
+            padding: 12px;
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .camera-type-option:hover { border-color: var(--primary); }
+        .camera-type-option.selected { border-color: var(--primary); background: rgba(14, 165, 233, 0.1); }
+        .camera-type-option span { display: block; font-size: 1.5rem; margin-bottom: 4px; }
+        .camera-type-option small { font-size: 0.75rem; color: var(--text-secondary); }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-secondary { background: var(--bg-dark); color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+
+        /* Alert Section */
+        .alert-form { display: flex; flex-direction: column; gap: 16px; }
+
+        .phone-preview {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: var(--bg-dark);
+            border-radius: 10px;
+        }
+
+        .phone-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(16, 185, 129, 0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--success);
+        }
+
+        .phone-info { flex: 1; }
+        .phone-label { font-size: 0.75rem; color: var(--text-muted); }
+        .phone-number { font-size: 0.95rem; font-weight: 600; }
+
+        .alert-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px;
+            background: var(--bg-dark);
+            border-radius: 10px;
+        }
+
+        .toggle-label { display: flex; flex-direction: column; }
+        .toggle-title { font-weight: 600; font-size: 0.9rem; }
+        .toggle-desc { font-size: 0.75rem; color: var(--text-muted); }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 26px;
+        }
+
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-card-hover);
+            border-radius: 26px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider::before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked + .toggle-slider { background: var(--success); }
+        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(22px); }
+
+        .save-btn {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Loading */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .loading-overlay.show { display: flex; }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { color: var(--text-primary); font-size: 1rem; }
+
+        /* Mobile */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 200;
+            width: 44px;
+            height: 44px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; padding-top: 70px; }
+            .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu -->
+    <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').style.transform = 'translateX(0)'">☰</button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar" style="transform: translateX(0);">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-icon">🛡️</div>
+                <span class="brand-name">Netra AI</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <a href="/dashboard" class="nav-item active">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a>
+                <a href="/webcam" class="nav-item">
+                    <span class="nav-icon">📹</span> Live Webcam
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Manage</div>
+                <a href="#upload" class="nav-item" onclick="scrollToSection('upload')">
+                    <span class="nav-icon">📤</span> Upload Media
+                </a>
+                <a href="#cameras" class="nav-item" onclick="scrollToSection('cameras')">
+                    <span class="nav-icon">📷</span> Cameras
+                </a>
+                <a href="#alerts" class="nav-item" onclick="scrollToSection('alerts')">
+                    <span class="nav-icon">🔔</span> Alerts
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar">{{ user_initial }}</div>
+                <div class="user-info">
+                    <div class="user-name">{{ username }}</div>
+                    <div class="user-role">{{ user_role }}</div>
+                </div>
+                <a href="/logout" class="logout-btn" title="Logout">🚪</a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Security Dashboard</h1>
+            <p class="page-subtitle">Welcome back, {{ username }}! Monitor and manage your security system.</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">📷</div>
+                <div class="stat-content">
+                    <div class="stat-label">Cameras</div>
+                    <div class="stat-value" id="totalCameras">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">✅</div>
+                <div class="stat-content">
+                    <div class="stat-label">Online</div>
+                    <div class="stat-value" id="onlineCameras">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon red">⚠️</div>
+                <div class="stat-content">
+                    <div class="stat-label">Violence Alerts</div>
+                    <div class="stat-value" id="totalDetections">0</div>
+                    <div class="stat-sub" id="latestThreat" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">⏱️</div>
+                <div class="stat-content">
+                    <div class="stat-label">Avg Response</div>
+                    <div class="stat-value" id="avgResponseTime">0ms</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Threat Breakdown -->
+        <div class="card" id="threatStats" style="margin-bottom: 24px;">
+            <div class="card-header">
+                <h2 class="card-title"><span>📊</span> Threat Analysis</h2>
+            </div>
+            <div class="card-body">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px;">
+                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 16px; text-align: center;">
+                        <div style="font-size: 1.75rem; font-weight: 700; color: #ef4444;" id="highThreat">0</div>
+                        <div style="font-size: 0.8rem; color: #fca5a5;">HIGH Threat</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="highThreatPct">0%</div>
+                    </div>
+                    <div style="background: rgba(251, 146, 60, 0.1); border: 1px solid rgba(251, 146, 60, 0.3); border-radius: 10px; padding: 16px; text-align: center;">
+                        <div style="font-size: 1.75rem; font-weight: 700; color: #fb923c;" id="mediumThreat">0</div>
+                        <div style="font-size: 0.8rem; color: #fdba74;">MEDIUM Threat</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="mediumThreatPct">0%</div>
+                    </div>
+                    <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 16px; text-align: center;">
+                        <div style="font-size: 1.75rem; font-weight: 700; color: #22c55e;" id="lowThreat">0</div>
+                        <div style="font-size: 0.8rem; color: #4ade80;">LOW Threat</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="lowThreatPct">0%</div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 24px; justify-content: center;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.25rem; font-weight: 600;" id="smsSent">0</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">SMS Sent</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.25rem; font-weight: 600;" id="whatsappSent">0</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">WhatsApp Sent</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Webcam -->
+        <div class="card" id="webcam">
+            <div class="card-header">
+                <h2 class="card-title"><span>📹</span> Live Webcam (Your Laptop Camera)</h2>
+                <a href="/webcam" class="webcam-btn">▶️ Open Live</a>
+            </div>
+            <div class="card-body">
+                <div class="webcam-preview">
+                    <span>📹</span>
+                    <small>Click "Open Live" to start your laptop camera</small>
+                </div>
+                <p style="text-align: center; color: var(--text-muted); margin-top: 16px; font-size: 0.9rem;">
+                    Uses OpenCV to access your laptop's built-in webcam for real-time violence detection
+                </p>
+            </div>
+        </div>
+
+        <!-- Upload Media -->
+        <div class="card" id="upload">
+            <div class="card-header">
+                <h2 class="card-title"><span>📤</span> Upload Photo or Video</h2>
+            </div>
+            <div class="card-body">
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📁</div>
+                    <h3>Upload Image or Video for Analysis</h3>
+                    <p>Click to browse or drag and drop files here</p>
+                    <button class="upload-btn">Choose File</button>
+                    <input type="file" id="fileInput" accept="image/*,video/*" onchange="handleUpload(event)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Result -->
+        <div class="card" id="resultSection" style="display: none;">
+            <div class="card-header">
+                <h2 class="card-title"><span>📊</span> Detection Result</h2>
+            </div>
+            <div class="card-body">
+                <div class="result-card" style="background: var(--bg-dark); border-radius: 12px; overflow: hidden;">
+                    <div class="result-image-container" style="position: relative; background: #000;">
+                        <img id="resultImage" style="width: 100%; max-height: 400px; object-fit: contain;" src="" alt="Result">
+                        <div class="result-badge" id="resultBadge" style="position: absolute; top: 16px; right: 16px; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;">
+                        </div>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div class="result-title" id="resultTitle" style="font-size: 1.3rem; font-weight: 600; margin-bottom: 16px;"></div>
+                        <div style="margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem;">
+                                <span style="color: var(--text-secondary);">Confidence</span>
+                                <span id="confidencePercent" style="font-weight: 600;"></span>
+                            </div>
+                            <div style="height: 8px; background: var(--bg-card); border-radius: 4px; overflow: hidden;">
+                                <div id="confidenceFill" style="height: 100%; border-radius: 4px; transition: width 0.5s;"></div>
+                            </div>
+                        </div>
+                        <div style="background: var(--bg-card); border-radius: 8px; padding: 12px; font-size: 0.85rem;">
+                            <div style="display: flex; justify-content: space-between; padding: 6px 0;">
+                                <span style="color: var(--text-secondary);">Status</span>
+                                <span id="detailStatus" style="font-weight: 500;"></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 6px 0;">
+                                <span style="color: var(--text-secondary);">Time</span>
+                                <span id="detailTime" style="font-weight: 500;"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RTSP Cameras -->
+        <div class="card" id="cameras">
+            <div class="card-header">
+                <h2 class="card-title"><span>📷</span> Add RTSP Cameras</h2>
+                <button class="btn btn-primary" onclick="openAddCameraModal()">+ Add Camera</button>
+            </div>
+            <div class="card-body">
+                <div class="cameras-grid" id="camerasGrid">
+                    <!-- Cameras loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert System -->
+        <div class="card" id="alerts">
+            <div class="card-header">
+                <h2 class="card-title"><span>📱</span> Alert System</h2>
+            </div>
+            <div class="card-body">
+                <div style="margin-bottom: 24px;">
+                    <label class="form-label">Phone Number for Alerts (+91 India)</label>
+                    <div style="display: flex; gap: 12px;">
+                        <div style="position: relative; flex: 1;">
+                            <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.95rem;">+91</span>
+                            <input type="tel" class="form-input" id="alertPhone" 
+                                placeholder="Enter 10-digit mobile number" 
+                                value="{{ alert_phone }}"
+                                style="padding-left: 50px;"
+                                maxlength="10"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+                        </div>
+                        <button class="btn btn-primary" onclick="saveAlertSettings()">Save</button>
+                    </div>
+                    <small style="color: var(--text-muted); display: block; margin-top: 8px;">
+                        Violence alerts will be sent to this number via SMS
+                    </small>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                    <button class="btn btn-secondary" onclick="testSmsAlert()" style="display: flex; align-items: center; gap: 8px;">
+                        📲 Test SMS
+                    </button>
+                    <button class="btn btn-secondary" onclick="testWhatsApp()" style="display: flex; align-items: center; gap: 8px;">
+                        💬 Test WhatsApp
+                    </button>
+                </div>
+
+                <div id="alertStatus" style="padding: 12px; border-radius: 8px; font-size: 0.9rem; display: none;"></div>
+
+                <div style="margin-top: 20px; padding: 16px; background: var(--bg-dark); border-radius: 8px;">
+                    <h4 style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-secondary);">How it works:</h4>
+                    <ul style="font-size: 0.85rem; color: var(--text-muted); padding-left: 20px; line-height: 1.8;">
+                        <li>When violence is detected, an SMS alert is sent to your phone</li>
+                        <li>Alerts include the confidence level and timestamp</li>
+                        <li>Configure Twilio in .env for SMS to work</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Camera Modal -->
+    <div class="modal-overlay" id="cameraModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Camera</h3>
+                <button class="modal-close" onclick="closeAddCameraModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="camera-type-options">
+                    <div class="camera-type-option selected" data-type="webcam" onclick="selectCameraType('webcam')">
+                        <span>💻</span>
+                        <small>Webcam</small>
+                    </div>
+                    <div class="camera-type-option" data-type="rtsp" onclick="selectCameraType('rtsp')">
+                        <span>🌐</span>
+                        <small>RTSP</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Camera Name</label>
+                    <input type="text" class="form-input" id="cameraName" placeholder="e.g., Front Door">
+                </div>
+
+                <div class="form-group" id="rtspGroup" style="display: none;">
+                    <label class="form-label">RTSP Link</label>
+                    <input type="text" class="form-input" id="cameraRTSP" placeholder="rtsp://username:password@ip:port/stream">
+                </div>
+
+                <div class="form-group" id="webcamGroup">
+                    <label class="form-label">Webcam Device</label>
+                    <select class="form-select" id="webcamSelect">
+                        <option value="0">Default Webcam (Laptop Camera)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAddCameraModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addCamera()">Add Camera</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Analyzing...</div>
+    </div>
+
+    <script>
+        // Camera storage
+        let cameras = JSON.parse(localStorage.getItem('netra_ai_cameras') || '[]');
+        let selectedCameraType = 'webcam';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCameras();
+            updateStats();
+            checkWebcams();
+            loadDetectionStats();
+            // Refresh stats every 10 seconds
+            setInterval(loadDetectionStats, 10000);
+        });
+
+        // Load detection statistics
+        function loadDetectionStats() {
+            fetch('/api/stats')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const stats = data.stats;
+                        
+                        // Update main stats
+                        document.getElementById('totalDetections').textContent = stats.total_detections;
+                        document.getElementById('avgResponseTime').textContent = Math.round(stats.avg_response_time) + 'ms';
+                        
+                        // Show latest detection info
+                        const latestThreatEl = document.getElementById('latestThreat');
+                        if (stats.latest_detection) {
+                            const latest = stats.latest_detection;
+                            const threatColor = latest.threat_level === 'HIGH' ? '#ef4444' : 
+                                              latest.threat_level === 'MEDIUM' ? '#fb923c' : '#22c55e';
+                            latestThreatEl.innerHTML = `Latest: <span style="color: ${threatColor}; font-weight: 600;">${latest.threat_level}</span> (${latest.confidence.toFixed(1)}%)`;
+                        } else {
+                            latestThreatEl.textContent = '';
+                        }
+                        
+                        // Update threat breakdown
+                        document.getElementById('highThreat').textContent = stats.high_threat;
+                        document.getElementById('mediumThreat').textContent = stats.medium_threat;
+                        document.getElementById('lowThreat').textContent = stats.low_threat;
+                        
+                        // Update percentages
+                        document.getElementById('highThreatPct').textContent = stats.high_threat_pct + '%';
+                        document.getElementById('mediumThreatPct').textContent = stats.medium_threat_pct + '%';
+                        document.getElementById('lowThreatPct').textContent = stats.low_threat_pct + '%';
+                        
+                        // Update SMS/WhatsApp counts
+                        document.getElementById('smsSent').textContent = stats.sms_sent;
+                        document.getElementById('whatsappSent').textContent = stats.whatsapp_sent;
+                    }
+                })
+                .catch(err => console.log('Error loading stats:', err));
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Camera functions
+        function loadCameras() {
+            const grid = document.getElementById('camerasGrid');
+            
+            if (cameras.length === 0) {
+                grid.innerHTML = `
+                    <div class="add-camera-card" onclick="openAddCameraModal()">
+                        <span>+</span>
+                        <p>Add RTSP Camera</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = cameras.map((camera, index) => `
+                <div class="camera-card">
+                    <div class="camera-preview">
+                        <div class="camera-placeholder">
+                            <span>${camera.type === 'webcam' ? '💻' : '🌐'}</span>
+                        </div>
+                        <div class="camera-status ${camera.online ? 'online' : 'offline'}">
+                            <span class="status-dot ${camera.online ? 'pulse' : ''}"></span>
+                            ${camera.online ? 'ONLINE' : 'OFFLINE'}
+                        </div>
+                    </div>
+                    <div class="camera-info">
+                        <div class="camera-name">
+                            ${camera.name}
+                            <div class="camera-actions">
+                                <button class="camera-action-btn delete" onclick="deleteCamera(${index})" title="Delete">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="camera-link">${camera.type === 'rtsp' ? camera.rtsp : 'Laptop Webcam'}</div>
+                        <div class="camera-type">${camera.type === 'webcam' ? '💻 Webcam' : '🌐 RTSP'}</div>
+                    </div>
+                </div>
+            `).join('') + `
+                <div class="add-camera-card" onclick="openAddCameraModal()">
+                    <span>+</span>
+                    <p>Add Camera</p>
+                </div>
+            `;
+        }
+
+        function updateStats() {
+            document.getElementById('totalCameras').textContent = cameras.length;
+            document.getElementById('onlineCameras').textContent = cameras.filter(c => c.online).length;
+        }
+
+        function openAddCameraModal() {
+            document.getElementById('cameraModal').classList.add('show');
+        }
+
+        function closeAddCameraModal() {
+            document.getElementById('cameraModal').classList.remove('show');
+            document.getElementById('cameraName').value = '';
+            document.getElementById('cameraRTSP').value = '';
+        }
+
+        function selectCameraType(type) {
+            selectedCameraType = type;
+            document.querySelectorAll('.camera-type-option').forEach(opt => {
+                opt.classList.toggle('selected', opt.dataset.type === type);
+            });
+            document.getElementById('rtspGroup').style.display = type === 'rtsp' ? 'block' : 'none';
+            document.getElementById('webcamGroup').style.display = type === 'webcam' ? 'block' : 'none';
+        }
+
+        async function checkWebcams() {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(d => d.kind === 'videoinput');
+                const select = document.getElementById('webcamSelect');
+                select.innerHTML = videoDevices.map((device, i) => 
+                    `<option value="${device.deviceId}">${device.label || 'Camera ' + (i + 1)}</option>`
+                ).join('');
+            } catch (err) {
+                console.log('Could not enumerate devices');
+            }
+        }
+
+        function addCamera() {
+            const name = document.getElementById('cameraName').value.trim();
+            if (!name) { alert('Please enter camera name'); return; }
+
+            let camera;
+            if (selectedCameraType === 'rtsp') {
+                const rtsp = document.getElementById('cameraRTSP').value.trim();
+                if (!rtsp) { alert('Please enter RTSP link'); return; }
+                camera = { name: name, type: 'rtsp', rtsp: rtsp, online: true };
+            } else {
+                camera = { name: name, type: 'webcam', deviceId: '0', online: true };
+            }
+
+            cameras.push(camera);
+            localStorage.setItem('netra_ai_cameras', JSON.stringify(cameras));
+            loadCameras();
+            updateStats();
+            closeAddCameraModal();
+        }
+
+        function deleteCamera(index) {
+            if (confirm('Delete this camera?')) {
+                cameras.splice(index, 1);
+                localStorage.setItem('netra_ai_cameras', JSON.stringify(cameras));
+                loadCameras();
+                updateStats();
+            }
+        }
+
+        // Alert Settings
+        function saveAlertSettings() {
+            const phone = document.getElementById('alertPhone').value.trim();
+            const statusEl = document.getElementById('alertStatus');
+            
+            if (phone && phone.length !== 10) {
+                showAlertStatus('Please enter a valid 10-digit phone number', 'error');
+                return;
+            }
+
+            const phoneWithCountry = phone ? '+91' + phone : '';
+            
+            fetch('/api/save-alert-settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    phone: phoneWithCountry,
+                    sms_enabled: true,
+                    whatsapp_enabled: false
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showAlertStatus('✅ Phone number saved successfully!', 'success');
+                } else {
+                    showAlertStatus('❌ Error: ' + data.message, 'error');
+                }
+            })
+            .catch(err => {
+                showAlertStatus('❌ Error saving settings', 'error');
+            });
+        }
+
+        function testSmsAlert() {
+            const phone = document.getElementById('alertPhone').value.trim();
+            const statusEl = document.getElementById('alertStatus');
+            
+            if (!phone || phone.length !== 10) {
+                showAlertStatus('Please enter a valid phone number first', 'error');
+                return;
+            }
+
+            showAlertStatus('📲 Sending test SMS...', 'info');
+            
+            fetch('/api/test-sms', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showAlertStatus('✅ Test SMS sent! Check your phone.', 'success');
+                } else {
+                    showAlertStatus('❌ SMS failed: ' + data.message, 'error');
+                }
+            })
+            .catch(err => {
+                showAlertStatus('❌ Error sending test SMS', 'error');
+            });
+        }
+
+        function testWhatsApp() {
+            const phone = document.getElementById('alertPhone').value.trim();
+            const statusEl = document.getElementById('alertStatus');
+            
+            if (!phone || phone.length !== 10) {
+                showAlertStatus('Please enter a valid phone number first', 'error');
+                return;
+            }
+
+            showAlertStatus('💬 Sending test WhatsApp message...', 'info');
+            
+            fetch('/api/test-whatsapp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showAlertStatus('✅ Test WhatsApp sent! Check your phone.', 'success');
+                } else {
+                    showAlertStatus('❌ WhatsApp failed: ' + data.message, 'error');
+                }
+            })
+            .catch(err => {
+                showAlertStatus('❌ Error sending test WhatsApp', 'error');
+            });
+        }
+
+        function showAlertStatus(message, type) {
+            const statusEl = document.getElementById('alertStatus');
+            statusEl.textContent = message;
+            statusEl.style.display = 'block';
+            
+            if (type === 'success') {
+                statusEl.style.background = 'rgba(16, 185, 129, 0.1)';
+                statusEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                statusEl.style.color = '#34d399';
+            } else if (type === 'error') {
+                statusEl.style.background = 'rgba(239, 68, 68, 0.1)';
+                statusEl.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                statusEl.style.color = '#fca5a5';
+            } else {
+                statusEl.style.background = 'rgba(59, 130, 246, 0.1)';
+                statusEl.style.border = '1px solid rgba(59, 130, 246, 0.3)';
+                statusEl.style.color = '#60a5fa';
+            }
+        }
+
+        // Upload
+        function handleUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            document.getElementById('loadingOverlay').classList.add('show');
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loadingOverlay').classList.remove('show');
+                if (data.success) {
+                    // Show result
+                    showResult(data);
+                } else {
+                    alert('Upload failed: ' + data.error);
+                }
+            })
+            .catch(error => {
+                document.getElementById('loadingOverlay').classList.remove('show');
+                alert('Upload failed. Please try again.');
+            });
+        }
+
+        // Show result after upload
+        function showResult(data) {
+            const resultSection = document.getElementById('resultSection');
+            const resultImage = document.getElementById('resultImage');
+            const resultBadge = document.getElementById('resultBadge');
+            const resultTitle = document.getElementById('resultTitle');
+            const confidenceFill = document.getElementById('confidenceFill');
+            const confidencePercent = document.getElementById('confidencePercent');
+            const detailStatus = document.getElementById('detailStatus');
+            const detailTime = document.getElementById('detailTime');
+            
+            if (data.detection) {
+                const d = data.detection;
+                console.log("Detection result:", d);
+                resultImage.src = '/' + data.result_image;
+                
+                if (d.violence_detected) {
+                    // Play alert sound
+                    playAlertSound();
+                    
+                    console.log("Violence detected! Triggering SMS...");
+                    alert("⚠️ Violence Detected! SMS Alert sent to your phone!");
+                    
+                    resultBadge.className = 'result-badge danger';
+                    resultBadge.innerHTML = '<span>⚠️</span><span>Violence Detected</span>';
+                    resultTitle.className = 'result-title danger';
+                    resultTitle.textContent = '⚠️ Violence Detected';
+                    confidenceFill.className = 'confidence-fill danger';
+                    confidenceFill.style.width = (d.confidence * 100) + '%';
+                    confidencePercent.textContent = (d.confidence * 100).toFixed(1) + '%';
+                    detailStatus.textContent = 'Violence Detected';
+                    
+                    // Trigger SMS alert
+                    console.log("Calling /api/trigger-alert...");
+                    fetch('/api/trigger-alert', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            confidence: d.confidence,
+                            objects: d.detected_objects || []
+                        })
+                    })
+                    .then(response => {
+                        console.log("Response status:", response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("API Response:", data);
+                    })
+                    .catch(e => console.log('Alert trigger error:', e));
+                } else {
+                    resultBadge.className = 'result-badge safe';
+                    resultBadge.innerHTML = '<span>✅</span><span>Safe</span>';
+                    resultTitle.className = 'result-title safe';
+                    resultTitle.textContent = '✅ No Violence Detected';
+                    confidenceFill.className = 'confidence-fill safe';
+                    confidenceFill.style.width = ((1 - d.confidence) * 100) + '%';
+                    confidencePercent.textContent = ((1 - d.confidence) * 100).toFixed(1) + '%';
+                    detailStatus.textContent = 'Safe';
+                }
+                
+                detailTime.textContent = new Date().toLocaleString();
+                resultSection.style.display = 'block';
+                resultSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Play alert sound - 5 seconds
+        function playAlertSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Play multiple beeps for 5 seconds
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.type = 'sine';
+                        oscillator.frequency.setValueAtTime(800 + (i % 2) * 200, audioContext.currentTime);
+                        
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.3);
+                    }, i * 500);
+                }
+            } catch (e) {
+                console.log('Audio error:', e);
+            }
+        }
+
+        // Phone formatting
+        const phoneInput = document.getElementById('phoneInput');
+        const phoneDisplay = document.getElementById('phoneDisplay');
+
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value.length <= 3) value = '+' + value;
+                else if (value.length <= 6) value = '+' + value.slice(0, 2) + ' (' + value.slice(2);
+                else if (value.length <= 10) value = '+' + value.slice(0, 2) + ' (' + value.slice(2, 5) + ') ' + value.slice(5);
+                else value = '+' + value.slice(0, 2) + ' (' + value.slice(2, 5) + ') ' + value.slice(5, 10) + '-' + value.slice(10, 14);
+            }
+            e.target.value = value;
+            phoneDisplay.textContent = value || 'Not configured';
+        });
+
+        // Alert form
+        document.getElementById('alertForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const phone = phoneInput.value;
+            const smsEnabled = document.getElementById('smsToggle').checked;
+
+            fetch('/api/save-alert-settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: phone, sms_enabled: smsEnabled })
+            })
+            .then(r => r.json())
+            .then(data => {
+                alert(data.success ? 'Alert settings saved!' : 'Error: ' + data.error);
+            });
+        });
+
+        // Test SMS function
+        function testSMS() {
+            if (!confirm('Send a test SMS to your phone? This will send an alert to ' + phoneInput.value)) {
+                return;
+            }
+            
+            document.getElementById('loadingOverlay').classList.add('show');
+            document.querySelector('.loading-text').textContent = 'Sending test SMS...';
+            
+            fetch('/api/test-sms', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('loadingOverlay').classList.remove('show');
+                alert('SMS Test Result:\n' + 
+                      'Success: ' + (data.success ? 'Yes' : 'No') + '\n' + 
+                      'Message: ' + data.message + '\n' +
+                      'Phone: ' + data.alert_phone);
+            })
+            .catch(err => {
+                document.getElementById('loadingOverlay').classList.remove('show');
+                alert('Error testing SMS: ' + err);
+            });
+        }
+    </script>
+</body>
+</html>

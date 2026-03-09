@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netra AI — Sign In</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-dark: #030712;
+            --bg-card: #111827;
+            --bg-input: #1f2937;
+            --border: #374151;
+            --border-light: #4b5563;
+            --text: #f9fafb;
+            --text-muted: #9ca3af;
+            --text-dim: #6b7280;
+            --success: #10b981;
+            --error: #ef4444;
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        /* Background image */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                linear-gradient(to bottom, rgba(3, 7, 18, 0.85), rgba(3, 7, 18, 0.95)),
+                url('https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Logo */
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary) 0%, #06b6d4 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin: 0 auto 1rem;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+        }
+
+        .logo-text {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+
+        .logo-sub {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Card */
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 1.75rem;
+        }
+
+        .card-title {
+            font-size: 1.375rem;
+            font-weight: 600;
+            margin-bottom: 0.375rem;
+        }
+
+        .card-subtitle {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Error */
+        .error {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 8px;
+            margin-bottom: 1.25rem;
+            font-size: 0.875rem;
+            color: #fca5a5;
+        }
+
+        .error.show {
+            display: flex;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            color: var(--text-dim);
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 2.75rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.9375rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .form-input:focus + .input-icon,
+        .form-input:focus ~ .input-icon {
+            color: var(--primary);
+        }
+
+        .password-btn {
+            position: absolute;
+            right: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.25rem;
+            transition: color 0.2s;
+        }
+
+        .password-btn:hover {
+            color: var(--text-muted);
+        }
+
+        /* Form row */
+        .form-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .remember-me input {
+            width: 1rem;
+            height: 1rem;
+            accent-color: var(--primary);
+        }
+
+        .forgot-link {
+            font-size: 0.875rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Captcha */
+        .captcha-wrap {
+            margin-bottom: 1.5rem;
+        }
+
+        .captcha-btn {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .captcha-btn:hover {
+            border-color: var(--border-light);
+        }
+
+        .captcha-box {
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 2px solid var(--border-light);
+            border-radius: 6px;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .captcha-box.spin {
+            border-color: var(--primary);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .captcha-box.check {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .captcha-box.check::after {
+            content: '✓';
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .captcha-text {
+            font-size: 0.9375rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .math-challenge {
+            display: none;
+            margin-top: 0.75rem;
+            padding: 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .math-challenge.show {
+            display: block;
+        }
+
+        .math-label {
+            font-size: 0.8125rem;
+            color: var(--text-dim);
+            margin-bottom: 0.75rem;
+        }
+
+        .math-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .math-expr {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.625rem 0.875rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #60a5fa;
+            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+        }
+
+        .math-eq {
+            color: var(--text-dim);
+            font-size: 0.9375rem;
+        }
+
+        .math-input {
+            width: 4rem;
+            padding: 0.625rem 0.75rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.9375rem;
+            outline: none;
+            transition: border-color 0.2s;
+            -moz-appearance: textfield;
+        }
+
+        .math-input::-webkit-outer-spin-button,
+        .math-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+
+        .math-input:focus {
+            border-color: var(--primary);
+        }
+
+        .math-input.correct {
+            border-color: var(--success);
+        }
+
+        .refresh-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.625rem 0.75rem;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .refresh-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .math-hint {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 0.625rem;
+        }
+
+        /* Submit */
+        .submit-btn {
+            width: 100%;
+            padding: 0.9375rem;
+            background: var(--primary);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-family: inherit;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .submit-btn.loading {
+            position: relative;
+            color: transparent;
+            pointer-events: none;
+        }
+
+        .submit-btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 1.25rem;
+            height: 1.25rem;
+            top: 50%;
+            left: 50%;
+            margin: -0.625rem 0 0 -0.625rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        /* Demo */
+        .demo {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+        }
+
+        .demo-title {
+            font-size: 0.6875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.075em;
+            color: var(--text-dim);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .demo-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .demo-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.625rem;
+            background: var(--bg-input);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .demo-item:hover {
+            background: var(--border);
+        }
+
+        .role {
+            font-size: 0.6875rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .role.admin {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+        }
+
+        .role.security {
+            background: rgba(251, 146, 60, 0.15);
+            color: #fb923c;
+        }
+
+        .role.user {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+
+        .demo-creds {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            font-family: 'SF Mono', 'Monaco', monospace;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 1.25rem;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem;
+                align-items: flex-start;
+                padding-top: 2rem;
+            }
+
+            .login-container {
+                margin-top: 1rem;
+            }
+
+            .logo {
+                margin-bottom: 1.5rem;
+            }
+
+            .logo-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                font-size: 1.5rem;
+            }
+
+            .logo-text {
+                font-size: 1.5rem;
+            }
+
+            .login-card {
+                padding: 1.5rem;
+                border-radius: 12px;
+            }
+
+            .card-title {
+                font-size: 1.25rem;
+            }
+
+            .form-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="logo">
+        <div class="logo-icon">🛡️</div>
+        <div class="logo-text">Netra AI</div>
+        <div class="logo-sub">Violence Detection System</div>
+    </div>
+
+    <div class="login-card">
+        <div class="card-header">
+            <h1 class="card-title">Welcome back</h1>
+            <p class="card-subtitle">Sign in to your dashboard</p>
+        </div>
+
+        {% if error %}
+        <div class="error show">
+            <span>⚠️</span>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+        <div class="error" id="jsError"></div>
+
+        <form method="POST" action="/login" id="loginForm" autocomplete="off">
+            
+            <div class="form-group">
+                <label class="form-label" for="username">Username</label>
+                <div class="input-wrap">
+                    <input type="text" id="username" name="username" class="form-input"
+                        placeholder="Enter your username" autocomplete="username" required>
+                    <span class="input-icon">👤</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <div class="input-wrap">
+                    <input type="password" id="password" name="password" class="form-input"
+                        placeholder="Enter your password" autocomplete="current-password" required>
+                    <span class="input-icon">🔒</span>
+                    <button type="button" class="password-btn" id="eyeBtn">👁️</button>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label class="remember-me">
+                    <input type="checkbox" name="remember">
+                    Remember me
+                </label>
+                <a href="#" class="forgot-link">Forgot password?</a>
+            </div>
+
+            <!-- Captcha -->
+            <div class="captcha-wrap">
+                <div class="captcha-btn" id="captchaBtn">
+                    <div class="captcha-box" id="captchaBox"></div>
+                    <span class="captcha-text" id="captchaText">I'm not a robot</span>
+                </div>
+
+                <div class="math-challenge" id="mathChallenge">
+                    <div class="math-label">Solve to verify you're human:</div>
+                    <div class="math-row">
+                        <div class="math-expr" id="mathExpr">—</div>
+                        <span class="math-eq">=</span>
+                        <input type="number" class="math-input" id="mathAns" placeholder="?">
+                        <button type="button" class="refresh-btn" id="refreshBtn" title="New problem">↻</button>
+                    </div>
+                    <div class="math-hint" id="mathHint">Enter the answer above</div>
+                </div>
+            </div>
+
+            <input type="hidden" name="captcha_ok" id="captchaOk" value="0">
+
+            <button type="submit" class="submit-btn" id="submitBtn">Sign In</button>
+        </form>
+
+        <div class="demo">
+            <div class="demo-title">Demo Credentials</div>
+            <div class="demo-list">
+                <div class="demo-item" onclick="fillCreds('admin', 'admin123')">
+                    <span class="role admin">Admin</span>
+                    <span class="demo-creds">admin / admin123</span>
+                </div>
+                <div class="demo-item" onclick="fillCreds('security', 'secure456')">
+                    <span class="role security">Security</span>
+                    <span class="demo-creds">security / secure456</span>
+                </div>
+                <div class="demo-item" onclick="fillCreds('user', 'user123')">
+                    <span class="role user">User</span>
+                    <span class="demo-creds">user / user123</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            🔒 Secure access. All attempts are logged.
+        </div>
+    </div>
+</div>
+
+<script>
+    function fillCreds(user, pass) {
+        document.getElementById('username').value = user;
+        document.getElementById('password').value = pass;
+    }
+
+    // Password toggle
+    const pw = document.getElementById('password');
+    document.getElementById('eyeBtn').addEventListener('click', function() {
+        const hidden = pw.type === 'password';
+        pw.type = hidden ? 'text' : 'password';
+        this.textContent = hidden ? '🙈' : '👁️';
+    });
+
+    // Captcha
+    let answer = null, passed = false;
+
+    function rand(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function newProblem() {
+        const ops = ['+', '−', '×'];
+        const op = ops[Math.floor(Math.random() * ops.length)];
+        let a, b, result;
+
+        if (op === '+') {
+            a = rand(5, 20);
+            b = rand(3, 15);
+            result = a + b;
+        } else if (op === '−') {
+            a = rand(15, 30);
+            b = rand(3, a - 3);
+            result = a - b;
+        } else {
+            a = rand(2, 10);
+            b = rand(2, 8);
+            result = a * b;
+        }
+
+        document.getElementById('mathExpr').textContent = a + ' ' + op + ' ' + b;
+        document.getElementById('mathAns').value = '';
+        document.getElementById('mathAns').classList.remove('correct');
+        document.getElementById('mathHint').textContent = 'Enter the answer above';
+        answer = result;
+    }
+
+    const captchaBtn = document.getElementById('captchaBtn');
+    const captchaBox = document.getElementById('captchaBox');
+    const captchaText = document.getElementById('captchaText');
+    const mathChallenge = document.getElementById('mathChallenge');
+
+    captchaBtn.addEventListener('click', function() {
+        if (passed) return;
+        
+        captchaBox.className = 'captcha-box spin';
+        captchaText.textContent = 'Verifying...';
+        captchaBtn.style.pointerEvents = 'none';
+
+        setTimeout(function() {
+            newProblem();
+            mathChallenge.classList.add('show');
+            captchaBox.className = 'captcha-box';
+            captchaText.textContent = 'Solve the problem';
+        }, 800);
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        newProblem();
+    });
+
+    document.getElementById('mathAns').addEventListener('input', function() {
+        if (parseInt(this.value, 10) === answer) {
+            passed = true;
+            this.classList.add('correct');
+            captchaBox.className = 'captcha-box check';
+            captchaText.textContent = 'Verified ✓';
+            document.getElementById('captchaOk').value = '1';
+            document.getElementById('mathHint').textContent = '✓ Correct - you may sign in';
+            setTimeout(function() {
+                mathChallenge.classList.remove('show');
+            }, 700);
+        }
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        const jsError = document.getElementById('jsError');
+        jsError.classList.remove('show');
+
+        const user = document.getElementById('username').value.trim();
+        const pass = document.getElementById('password').value.trim();
+
+        if (!user || !pass) {
+            e.preventDefault();
+            jsError.innerHTML = '<span>⚠️</span><span>Please enter username and password.</span>';
+            jsError.classList.add('show');
+            return;
+        }
+
+        if (!passed) {
+            e.preventDefault();
+            jsError.innerHTML = '<span>⚠️</span><span>Please complete the verification.</span>';
+            jsError.classList.add('show');
+            captchaBtn.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+            return;
+        }
+
+        const btn = document.getElementById('submitBtn');
+        btn.classList.add('loading');
+        btn.disabled = true;
+    });
+</script>
+
+</body>
+</html>

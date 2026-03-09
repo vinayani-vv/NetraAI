@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netra AI - Video Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            color: #00d9ff;
+            margin-bottom: 10px;
+        }
+        
+        .nav-section {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #00d9ff 0%, #00ff88 100%);
+            color: #1a1a2e;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .video-container {
+            background: #0f3460;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .video-wrapper {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        video {
+            width: 100%;
+            display: block;
+        }
+        
+        .info-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .info-card h3 {
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #a0a0a0;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ Netra AI</h1>
+            <p class="subtitle">Video Analysis</p>
+        </header>
+        
+        <div class="nav-section">
+            <a href="/" class="btn btn-secondary">📤 Upload New</a>
+            <a href="/webcam" class="btn btn-primary">📹 Live Webcam</a>
+        </div>
+        
+        <div class="video-container">
+            <div class="video-wrapper">
+                <video controls autoplay>
+                    <source src="{{ url_for('static', filename='uploads/' + filename) }}" type="video/mp4">
+                    Your browser does not support video playback.
+                </video>
+            </div>
+            
+            <div class="info-card">
+                <h3>📁 Video Information</h3>
+                <p>Filename: {{ filename }}</p>
+                <p>Status: Processing...</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2024 Netra AI - AI-Powered Security System</p>
+        </footer>
+    </div>
+</body>
+</html>

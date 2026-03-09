@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netra AI - Violence Detection System</title>
+    <style>
+        :root {
+            --primary-color: #0ea5e9;
+            --primary-dark: #0284c7;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-color), #06b6d4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 30px;
+            background: var(--bg-card);
+            padding: 6px;
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .upload-area {
+            padding: 60px 40px;
+            text-align: center;
+            border: 2px dashed var(--border-color);
+            margin: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(14, 165, 233, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary-color);
+            background: rgba(14, 165, 233, 0.1);
+        }
+
+        .upload-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(14, 165, 233, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: var(--primary-color);
+        }
+
+        .upload-area h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .upload-area p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .result-section {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .result-image-container {
+            position: relative;
+            background: #000;
+        }
+
+        .result-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .result-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .result-badge.safe {
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+        }
+
+        .result-badge.danger {
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+        }
+
+        .result-content {
+            padding: 24px;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .result-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .result-icon.safe {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .result-icon.danger {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .result-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .result-title.safe {
+            color: var(--success-color);
+        }
+
+        .result-title.danger {
+            color: var(--danger-color);
+        }
+
+        .result-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .confidence-section {
+            margin-bottom: 20px;
+        }
+
+        .confidence-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .confidence-label span:first-child {
+            color: var(--text-secondary);
+        }
+
+        .confidence-label span:last-child {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .confidence-bar {
+            height: 8px;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .confidence-fill.safe {
+            background: linear-gradient(90deg, var(--success-color), #34d399);
+        }
+
+        .confidence-fill.danger {
+            background: linear-gradient(90deg, var(--danger-color), #f87171);
+        }
+
+        .result-details {
+            background: var(--bg-dark);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 40px;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            .upload-area {
+                padding: 40px 20px;
+            }
+
+            .nav-tabs {
+                width: 100%;
+            }
+
+            .nav-tab {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">🛡️</div>
+                <h1>Netra AI</h1>
+            </div>
+            <p class="subtitle">AI-Powered Violence Detection System</p>
+        </header>
+
+        <div class="nav-tabs">
+            <a href="/" class="nav-tab active">
+                <span>📤</span> Upload Media
+            </a>
+            <a href="/webcam" class="nav-tab">
+                <span>📹</span> Live Webcam
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📁</div>
+                <h3>Upload Image or Video</h3>
+                <p>Click to browse or drag and drop files here</p>
+                <button class="upload-btn">Choose File</button>
+                <input type="file" id="fileInput" accept="image/*,video/*" onchange="handleUpload(event)">
+            </div>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <div class="result-card">
+                <div class="result-image-container">
+                    <img id="resultImage" class="result-image" src="" alt="Result">
+                    <div class="result-badge" id="resultBadge">
+                        <span id="badgeIcon"></span>
+                        <span id="badgeText"></span>
+                    </div>
+                </div>
+                <div class="result-content">
+                    <div class="result-header">
+                        <div class="result-icon" id="resultIcon">
+                            <span id="resultIconContent"></span>
+                        </div>
+                        <div>
+                            <div class="result-title" id="resultTitle"></div>
+                            <div class="result-subtitle" id="resultSubtitle"></div>
+                        </div>
+                    </div>
+                    <div class="confidence-section">
+                        <div class="confidence-label">
+                            <span>Confidence Level</span>
+                            <span id="confidencePercent"></span>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="confidenceFill"></div>
+                        </div>
+                    </div>
+                    <div class="result-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Status</span>
+                            <span class="detail-value" id="detailStatus"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Detection Time</span>
+                            <span class="detail-value" id="detailTime"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Alert Method</span>
+                            <span class="detail-value" id="detailAlert"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2024 Netra AI - AI-Powered Violence Detection System</p>
+        </footer>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Analyzing media...</div>
+    </div>
+
+    <script>
+        // Request notification permission on load
+        if ('Notification' in window && Notification.permission !== 'granted') {
+            Notification.requestPermission();
+        }
+
+        function showBrowserNotification(title, body) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, { body: body });
+            }
+        }
+
+        // Alarm sound using Web Audio API
+        function playAlarm() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(440, audioContext.currentTime + 0.2);
+                oscillator.frequency.setValueAtTime(880, audioContext.currentTime + 0.4);
+                
+                gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.6);
+            } catch (e) {
+                console.log('Audio alarm not available');
+            }
+        }
+
+        function handleUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            // Show loading
+            document.getElementById('loadingOverlay').classList.add('show');
+            document.getElementById('resultSection').classList.remove('show');
+            
+            // Show image preview
+            if (file.type.startsWith('image/')) {
+                document.getElementById('resultImage').src = URL.createObjectURL(file);
+            } else {
+                document.getElementById('resultImage').src = '';
+            }
+            
+            fetch('/detect', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loadingOverlay').classList.remove('show');
+                document.getElementById('resultSection').classList.add('show');
+                
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                } else if (data.violence_detected) {
+                    // Update UI for violence detected
+                    document.getElementById('resultBadge').className = 'result-badge danger';
+                    document.getElementById('badgeIcon').textContent = '⚠️';
+                    document.getElementById('badgeText').textContent = 'VIOLENCE DETECTED';
+                    
+                    document.getElementById('resultIcon').className = 'result-icon danger';
+                    document.getElementById('resultIconContent').textContent = '⚠️';
+                    document.getElementById('resultTitle').className = 'result-title danger';
+                    document.getElementById('resultTitle').textContent = 'VIOLENCE DETECTED';
+                    document.getElementById('resultSubtitle').textContent = 'Potential violence detected in the uploaded content';
+                    
+                    document.getElementById('confidenceFill').className = 'confidence-fill danger';
+                    document.getElementById('confidenceFill').style.width = (data.confidence * 100) + '%';
+                    document.getElementById('confidencePercent').textContent = (data.confidence * 100).toFixed(1) + '%';
+                    
+                    document.getElementById('detailStatus').textContent = 'Alert Triggered';
+                    document.getElementById('detailTime').textContent = new Date().toLocaleTimeString();
+                    document.getElementById('detailAlert').textContent = 'SMS + Browser Notification';
+                    
+                    // Show browser notification
+                    showBrowserNotification('🚨 Violence Detected!', 'Potential violence detected with ' + (data.confidence * 100).toFixed(1) + '% confidence');
+                    
+                    // Play alarm sound
+                    playAlarm();
+                    setTimeout(playAlarm, 800);
+                    setTimeout(playAlarm, 1600);
+                } else {
+                    // Update UI for safe
+                    document.getElementById('resultBadge').className = 'result-badge safe';
+                    document.getElementById('badgeIcon').textContent = '✓';
+                    document.getElementById('badgeText').textContent = 'NO VIOLENCE';
+                    
+                    document.getElementById('resultIcon').className = 'result-icon safe';
+                    document.getElementById('resultIconContent').textContent = '✓';
+                    document.getElementById('resultTitle').className = 'result-title safe';
+                    document.getElementById('resultTitle').textContent = 'NO VIOLENCE DETECTED';
+                    document.getElementById('resultSubtitle').textContent = 'The uploaded content appears to be safe';
+                    
+                    document.getElementById('confidenceFill').className = 'confidence-fill safe';
+                    document.getElementById('confidenceFill').style.width = (data.confidence * 100) + '%';
+                    document.getElementById('confidencePercent').textContent = (data.confidence * 100).toFixed(1) + '%';
+                    
+                    document.getElementById('detailStatus').textContent = 'Safe';
+                    document.getElementById('detailTime').textContent = new Date().toLocaleTimeString();
+                    document.getElementById('detailAlert').textContent = 'No Alert Sent';
+                }
+            })
+            .catch(err => {
+                document.getElementById('loadingOverlay').classList.remove('show');
+                console.error('Error:', err);
+                alert('Failed to analyze the file: ' + err.message);
+            });
+        }
+
+        // Drag and drop support
+        const uploadArea = document.getElementById('uploadArea');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                document.getElementById('fileInput').files = e.dataTransfer.files;
+                handleUpload({ target: { files: e.dataTransfer.files } });
+            }
+        });
+    </script>
+</body>
+</html>
