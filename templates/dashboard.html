@@ -628,13 +628,16 @@
             cursor: pointer;
         }
 
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
-            .sidebar.open { transform: translateX(0); }
-            .main-content { margin-left: 0; padding-top: 70px; }
-            .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+        .mobile-menu-btn:hover { background: var(--bg-card-hover); }
+
+        @media (max-width: 480px) {
+            .sidebar { transform: translateX(-100%) !important; transition: transform 0.3s ease; }
+            .sidebar.open { transform: translateX(0) !important; }
+            .main-content { margin-left: 0 !important; padding-top: 70px; padding-left: 16px; padding-right: 16px; }
+            .mobile-menu-btn { display: flex !important; align-items: center; justify-content: center; }
             .stats-grid { grid-template-columns: 1fr 1fr; }
             .sidebar-close-btn { display: flex; }
+            .page-title { font-size: 1.4rem; }
         }
 
         .sidebar-close-btn {
@@ -653,11 +656,28 @@
             align-items: center;
             justify-content: center;
         }
+
+        /* Mobile Overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+
+        .sidebar-overlay.show { display: block; }
     </style>
 </head>
 <body>
     <!-- Mobile Menu -->
     <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Mobile Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
@@ -1020,14 +1040,17 @@
         function scrollToSection(id) {
             document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
             // Close sidebar on mobile after clicking a nav item
-            if (window.innerWidth <= 768) {
+            if (window.innerWidth <= 480) {
                 document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('sidebarOverlay').classList.remove('show');
             }
         }
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
             sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
         }
 
         // Camera functions
